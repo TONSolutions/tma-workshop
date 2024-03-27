@@ -30,7 +30,7 @@ async def inline_query_handler(update: Update, _: ContextTypes.DEFAULT_TYPE):
                 },
                 "reply_markup": {
                     "inline_keyboard": [
-                        [{"text": "Click me", "url": "https://t.me/tonlabs_workshops"}]
+                        [{"text": "Click me", "url": "https://t.me/ton_solutions_en"}]
                     ]
                 },
             }
