@@ -53,23 +53,37 @@ window.Telegram.WebApp.CloudStorage.getItem("refreshToken", (err, refreshToken) 
 For example, if your front-end fetches profile information, it should do so only once and then update the information if any changes occur.
 
 ```javascript
-const userProfile = {
-    firstName: "Chris",
-    lastName: "Solutions",
-    avatar: "https://some-avatar.com",
-    username: "candyflipline",
-};
+const setStorageItem = (key, value) => {
+    window.Telegram.WebApp.CloudStorage.setItem(key, value);
+}
 
-window.Telegram.WebApp.CloudStorage.setItem("profile", JSON.stringify(userProfile));
+const getStorageItem = (key) => {
+    return new Promise((resolve, reject) => {
+        window.Telegram.WebApp.CloudStorage.getItem(key, (err, value) => {
+            if (err || !value) {
+                return reject(new Error('Data is not stored'));
+            }
+
+            resolve(value);
+        });
+    });
+}
+
+getStorageItem('profile').then((profile) => {
+    setProfile(profile);
+    updateProfileUsername(profile, 'updated_username');
+}).catch((err) => {
+    const profile = getProfileFromServer();
+    setStorageItem('profile', profile);
+    setProfile(profile);
+});
 
 const updateProfileUsername = async (profile, username) => {
     profile.username = username;
-    const result = await sendDataToBackend();
+    const result = await sendDataToBackend(profile);
     if (result === 200) {
-        window.Telegram.WebApp.CloudStorage.setItem("profile", JSON.stringify(profile))
+        setStorageItem('profile', JSON.stringify(profile));
     }
 }
-
-updateProfileUsername(userProfile, "ton_solutions_eden");
 ```
 
